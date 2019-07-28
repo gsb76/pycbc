@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pycbc.inference.io package &mdash; PyCBC 1.14.dev2 documentation</title>
+  <title>pycbc.inference.io package &mdash; PyCBC e163dc documentation</title>
   
 
   
@@ -62,6 +62,10 @@
 
           
             
+            
+              <div class="version">
+                1.14.1
+              </div>
             
           
 
@@ -1198,12 +1202,79 @@ MCMCMetadatIO.</p>
 
 <dl class="class">
 <dt id="pycbc.inference.io.base_multitemper.ParseTempsArg">
-<em class="property">class </em><code class="descclassname">pycbc.inference.io.base_multitemper.</code><code class="descname">ParseTempsArg</code><span class="sig-paren">(</span><em>type=&lt;class 'str'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/io/base_multitemper.html#ParseTempsArg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.io.base_multitemper.ParseTempsArg" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pycbc.inference.io.base_multitemper.</code><code class="descname">ParseTempsArg</code><span class="sig-paren">(</span><em>type=&lt;type 'str'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/io/base_multitemper.html#ParseTempsArg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.io.base_multitemper.ParseTempsArg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Action" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">argparse.Action</span></code></a></p>
 <p>Argparse action that will parse temps argument.</p>
 <p>If the provided argument is ‘all’, sets ‘all’ in the namespace dest. If a
 a sequence of numbers are provided, converts those numbers to ints before
 saving to the namespace.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pycbc.inference.io.base_nested_sampler">
+<span id="pycbc-inference-io-base-nested-sampler-module"></span><h2>pycbc.inference.io.base_nested_sampler module<a class="headerlink" href="#module-pycbc.inference.io.base_nested_sampler" title="Permalink to this headline">¶</a></h2>
+<p>Provides IO for the dynesty sampler.</p>
+<dl class="class">
+<dt id="pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile">
+<em class="property">class </em><code class="descclassname">pycbc.inference.io.base_nested_sampler.</code><code class="descname">BaseNestedSamplerFile</code><span class="sig-paren">(</span><em>path</em>, <em>mode=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/io/base_nested_sampler.html#BaseNestedSamplerFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycbc.inference.io.base_sampler.BaseSamplerFile" title="pycbc.inference.io.base_sampler.BaseSamplerFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycbc.inference.io.base_sampler.BaseSamplerFile</span></code></a></p>
+<p>Class to handle file IO for the nested samplers cpnest and dynesty.</p>
+<dl class="attribute">
+<dt id="pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile.name">
+<code class="descname">name</code><em class="property"> = 'base_nest_file'</em><a class="headerlink" href="#pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile.read_raw_samples">
+<code class="descname">read_raw_samples</code><span class="sig-paren">(</span><em>fields</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/io/base_nested_sampler.html#BaseNestedSamplerFile.read_raw_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile.read_raw_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Low level function for reading datasets in the samples group.</p>
+<p>This should return a dictionary of numpy arrays.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile.write_niterations">
+<code class="descname">write_niterations</code><span class="sig-paren">(</span><em>niterations</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/io/base_nested_sampler.html#BaseNestedSamplerFile.write_niterations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile.write_niterations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the given number of iterations to the sampler group.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile.write_resume_point">
+<code class="descname">write_resume_point</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/io/base_nested_sampler.html#BaseNestedSamplerFile.write_resume_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile.write_resume_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should write the point that a sampler starts up.</p>
+<p>How the resume point is indexed is up to the sampler. For example,
+MCMC samplers use the number of iterations that are stored in the
+checkpoint file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile.write_sampler_metadata">
+<code class="descname">write_sampler_metadata</code><span class="sig-paren">(</span><em>sampler</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/io/base_nested_sampler.html#BaseNestedSamplerFile.write_sampler_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile.write_sampler_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds writing betas to MultiTemperedMCMCIO.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile.write_samples">
+<code class="descname">write_samples</code><span class="sig-paren">(</span><em>samples</em>, <em>parameters=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/io/base_nested_sampler.html#BaseNestedSamplerFile.write_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile.write_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes samples to the given file.</p>
+<p>Results are written to <code class="docutils literal notranslate"><span class="pre">samples_group/{vararg}</span></code>, where <code class="docutils literal notranslate"><span class="pre">{vararg}</span></code>
+is the name of a model params. The samples are written as an
+array of length <code class="docutils literal notranslate"><span class="pre">niterations</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – The samples to write. Each array in the dictionary should have
+length niterations.</li>
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><em>optional</em>) – Only write the specified parameters to the file. If None, will
+write all of the keys in the <code class="docutils literal notranslate"><span class="pre">samples</span></code> dict.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -1232,6 +1303,22 @@ checkpoint file.</p>
 <dd><p>This should write the given sampler’s metadata to the file.</p>
 <p>This should also include the model’s metadata.</p>
 </dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pycbc.inference.io.dynesty">
+<span id="pycbc-inference-io-dynesty-module"></span><h2>pycbc.inference.io.dynesty module<a class="headerlink" href="#module-pycbc.inference.io.dynesty" title="Permalink to this headline">¶</a></h2>
+<p>Provides IO for the dynesty sampler.</p>
+<dl class="class">
+<dt id="pycbc.inference.io.dynesty.DynestyFile">
+<em class="property">class </em><code class="descclassname">pycbc.inference.io.dynesty.</code><code class="descname">DynestyFile</code><span class="sig-paren">(</span><em>path</em>, <em>mode=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/io/dynesty.html#DynestyFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.io.dynesty.DynestyFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile" title="pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycbc.inference.io.base_nested_sampler.BaseNestedSamplerFile</span></code></a></p>
+<p>Class to handle file IO for the <code class="docutils literal notranslate"><span class="pre">dynesty</span></code> sampler.</p>
+<dl class="attribute">
+<dt id="pycbc.inference.io.dynesty.DynestyFile.name">
+<code class="descname">name</code><em class="property"> = 'dynesty_file'</em><a class="headerlink" href="#pycbc.inference.io.dynesty.DynestyFile.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1590,7 +1677,7 @@ from posterior-only TXT files.</p>
 <dl class="exception">
 <dt id="pycbc.inference.io.NoInputFileError">
 <em class="property">exception </em><code class="descclassname">pycbc.inference.io.</code><code class="descname">NoInputFileError</code><a class="reference internal" href="_modules/pycbc/inference/io.html#NoInputFileError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.io.NoInputFileError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
 <p>Raised in custom argparse Actions by arguments needing input-files when
 no file(s) were provided.</p>
 </dd></dl>
@@ -1919,7 +2006,7 @@ samples.</p>
     <p>
         &copy; Copyright 2015, 2016, 2017, Alexander Nitz, Ian Harry, Christopher M. Biwer, Duncan A.  Brown, Josh Willis, and Tito Dal Canton
       <span class="lastupdated">
-        Last updated on Jul 26, 2019.
+        Last updated on Jul 28, 2019.
       </span>
 
     </p>

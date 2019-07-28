@@ -9,6 +9,17 @@
 |
 
 
+.. _inheritance-io-dynesty_file:
+
+* ``dynesty_file``:
+
+.. inheritance-diagram:: pycbc.inference.io.dynesty.DynestyFile
+   :parts: 3
+   :top-classes: pycbc.inference.io.base_hdf.BaseInferenceFile
+
+|
+
+
 .. _inheritance-io-emcee_file:
 
 * ``emcee_file``:

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pycbc.inference.sampler &mdash; PyCBC 1.14.dev2 documentation</title>
+  <title>pycbc.inference.sampler &mdash; PyCBC e163dc documentation</title>
   
 
   
@@ -60,6 +60,10 @@
 
           
             
+            
+              <div class="version">
+                1.14.1
+              </div>
             
           
 
@@ -237,6 +241,12 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.dynesty</span> <span class="k">import</span> <span class="n">DynestySampler</span>
+    <span class="n">samplers</span><span class="p">[</span><span class="n">DynestySampler</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">DynestySampler</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
 <div class="viewcode-block" id="load_from_config"><a class="viewcode-back" href="../../../pycbc.inference.sampler.html#pycbc.inference.sampler.load_from_config">[docs]</a><span class="k">def</span> <span class="nf">load_from_config</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Loads a sampler from the given config file.</span>
 
@@ -274,7 +284,7 @@
     <p>
         &copy; Copyright 2015, 2016, 2017, Alexander Nitz, Ian Harry, Christopher M. Biwer, Duncan A.  Brown, Josh Willis, and Tito Dal Canton
       <span class="lastupdated">
-        Last updated on Jul 26, 2019.
+        Last updated on Jul 28, 2019.
       </span>
 
     </p>

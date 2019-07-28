@@ -1,3 +1,13 @@
+.. _inheritance-dynesty:
+
+* ``dynesty``:
+
+.. inheritance-diagram:: pycbc.inference.sampler.dynesty.DynestySampler
+   :parts: 3
+
+|
+
+
 .. _inheritance-emcee:
 
 * ``emcee``:

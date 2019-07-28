@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pycbc.inference.sampler package &mdash; PyCBC 1.14.dev2 documentation</title>
+  <title>pycbc.inference.sampler package &mdash; PyCBC e163dc documentation</title>
   
 
   
@@ -62,6 +62,10 @@
 
           
             
+            
+              <div class="version">
+                1.14.1
+              </div>
             
           
 
@@ -979,7 +983,7 @@ Each array will have shape <code class="docutils literal notranslate"><span clas
 
 <dl class="function">
 <dt id="pycbc.inference.sampler.base_mcmc.get_optional_arg_from_config">
-<code class="descclassname">pycbc.inference.sampler.base_mcmc.</code><code class="descname">get_optional_arg_from_config</code><span class="sig-paren">(</span><em>cp</em>, <em>section</em>, <em>arg</em>, <em>dtype=&lt;class 'str'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/sampler/base_mcmc.html#get_optional_arg_from_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.sampler.base_mcmc.get_optional_arg_from_config" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pycbc.inference.sampler.base_mcmc.</code><code class="descname">get_optional_arg_from_config</code><span class="sig-paren">(</span><em>cp</em>, <em>section</em>, <em>arg</em>, <em>dtype=&lt;type 'str'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/sampler/base_mcmc.html#get_optional_arg_from_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.sampler.base_mcmc.get_optional_arg_from_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function to retrieve an optional argument from a config
 file.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1139,6 +1143,153 @@ number of samples per walker is less than this, will just set to
 </dd></dl>
 
 </div>
+<div class="section" id="module-pycbc.inference.sampler.dynesty">
+<span id="pycbc-inference-sampler-dynesty-module"></span><h2>pycbc.inference.sampler.dynesty module<a class="headerlink" href="#module-pycbc.inference.sampler.dynesty" title="Permalink to this headline">¶</a></h2>
+<p>This modules provides classes and functions for using the dynesty sampler
+packages for parameter estimation.</p>
+<dl class="class">
+<dt id="pycbc.inference.sampler.dynesty.DynestyModel">
+<em class="property">class </em><code class="descclassname">pycbc.inference.sampler.dynesty.</code><code class="descname">DynestyModel</code><span class="sig-paren">(</span><em>model</em>, <em>loglikelihood_function=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/sampler/dynesty.html#DynestyModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestyModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class for making PyCBC Inference ‘model class’
+:param model: A model instance from pycbc.
+:type model: inference.BaseModel instance</p>
+<dl class="method">
+<dt id="pycbc.inference.sampler.dynesty.DynestyModel.log_likelihood">
+<code class="descname">log_likelihood</code><span class="sig-paren">(</span><em>cube</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/sampler/dynesty.html#DynestyModel.log_likelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestyModel.log_likelihood" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns log likelihood function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycbc.inference.sampler.dynesty.DynestyModel.prior_transform">
+<code class="descname">prior_transform</code><span class="sig-paren">(</span><em>cube</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/sampler/dynesty.html#DynestyModel.prior_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestyModel.prior_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>prior transform function for dynesty sampler
+It takes unit cube as input parameter and apply
+prior transforms</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler">
+<em class="property">class </em><code class="descclassname">pycbc.inference.sampler.dynesty.</code><code class="descname">DynestySampler</code><span class="sig-paren">(</span><em>model</em>, <em>nlive</em>, <em>dlogz</em>, <em>nprocesses=1</em>, <em>loglikelihood_function=None</em>, <em>use_mpi=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/sampler/dynesty.html#DynestySampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycbc.inference.sampler.base.BaseSampler" title="pycbc.inference.sampler.base.BaseSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">pycbc.inference.sampler.base.BaseSampler</span></code></a></p>
+<p>This class is used to construct an Dynesty sampler from the dynesty
+package.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>model</em>) – A model from <code class="docutils literal notranslate"><span class="pre">pycbc.inference.models</span></code>.</li>
+<li><strong>nlive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of live points to use in sampler.</li>
+<li><strong>dlogz</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Tolerance limit to the value of logz (also a convergence criteria)</li>
+<li><strong>pool</strong> (<em>function with map</em><em>, </em><em>Optional</em>) – A provider of a map function that allows a function call to be run
+over multiple sets of arguments and possibly maps them to
+cores/nodes/etc.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.checkpoint">
+<code class="descname">checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/sampler/dynesty.html#DynestySampler.checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>The sampler must have a checkpoint method for dumping raw samples
+and stats to the file type defined by <code class="docutils literal notranslate"><span class="pre">io</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.finalize">
+<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/sampler/dynesty.html#DynestySampler.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do any finalization to the samples file before exiting.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.from_config">
+<em class="property">classmethod </em><code class="descname">from_config</code><span class="sig-paren">(</span><em>cp</em>, <em>model</em>, <em>nprocesses=1</em>, <em>loglikelihood_function=None</em>, <em>use_mpi=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/sampler/dynesty.html#DynestySampler.from_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the sampler from the given config file.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.io">
+<code class="descname">io</code><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.io" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.logz">
+<code class="descname">logz</code><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.logz" title="Permalink to this definition">¶</a></dt>
+<dd><p>return bayesian evidence estimated by
+dynesty sampler</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.logz_err">
+<code class="descname">logz_err</code><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.logz_err" title="Permalink to this definition">¶</a></dt>
+<dd><p>return error in bayesian evidence estimated by
+dynesty sampler</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.model_stats">
+<code class="descname">model_stats</code><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.model_stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.name">
+<code class="descname">name</code><em class="property"> = 'dynesty'</em><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.niterations">
+<code class="descname">niterations</code><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.niterations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.posterior_samples">
+<code class="descname">posterior_samples</code><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.posterior_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns posterior samples from nested samples and weights
+given by dynsety sampler</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/sampler/dynesty.html#DynestySampler.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function should run the sampler.</p>
+<p>Any checkpointing should be done internally in this function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.samples">
+<code class="descname">samples</code><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.samples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.set_initial_conditions">
+<code class="descname">set_initial_conditions</code><span class="sig-paren">(</span><em>initial_distribution=None</em>, <em>samples_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/sampler/dynesty.html#DynestySampler.set_initial_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.set_initial_conditions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up the starting point for the sampler.</p>
+<p>Should also set the sampler’s random state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycbc.inference.sampler.dynesty.DynestySampler.write_results">
+<code class="descname">write_results</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/inference/sampler/dynesty.html#DynestySampler.write_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.inference.sampler.dynesty.DynestySampler.write_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes samples, model stats, acceptance fraction, and random state
+to the given file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The file to write to. The file is opened using the <code class="docutils literal notranslate"><span class="pre">io</span></code> class
+in an an append state.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-pycbc.inference.sampler.emcee">
 <span id="pycbc-inference-sampler-emcee-module"></span><h2>pycbc.inference.sampler.emcee module<a class="headerlink" href="#module-pycbc.inference.sampler.emcee" title="Permalink to this headline">¶</a></h2>
 <p>This modules provides classes and functions for using the emcee sampler
@@ -1167,12 +1318,7 @@ cores/nodes/etc.</li>
 <dl class="attribute">
 <dt id="pycbc.inference.sampler.emcee.EmceeEnsembleSampler.base_shape">
 <code class="descname">base_shape</code><a class="headerlink" href="#pycbc.inference.sampler.emcee.EmceeEnsembleSampler.base_shape" title="Permalink to this definition">¶</a></dt>
-<dd><p>What shape the sampler’s samples arrays are in, excluding
-the iterations dimension.</p>
-<p>For example, if a sampler uses 20 walkers and 3 temperatures, this
-would be <code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">20)</span></code>. If a sampler only uses a single walker and no
-temperatures this would be <code class="docutils literal notranslate"><span class="pre">()</span></code>.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="pycbc.inference.sampler.emcee.EmceeEnsembleSampler.burn_in_class">
@@ -1202,11 +1348,7 @@ this just passes.</p>
 <dl class="attribute">
 <dt id="pycbc.inference.sampler.emcee.EmceeEnsembleSampler.io">
 <code class="descname">io</code><a class="headerlink" href="#pycbc.inference.sampler.emcee.EmceeEnsembleSampler.io" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class that inherits from <code class="docutils literal notranslate"><span class="pre">BaseInferenceFile</span></code> to handle IO with
-an hdf file.</p>
-<p>This should be a class, not an instance of class, so that the sampler
-can initialize it when needed.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="pycbc.inference.sampler.emcee.EmceeEnsembleSampler.model_stats">
@@ -1300,12 +1442,7 @@ cores/nodes/etc.</li>
 <dl class="attribute">
 <dt id="pycbc.inference.sampler.emcee_pt.EmceePTSampler.base_shape">
 <code class="descname">base_shape</code><a class="headerlink" href="#pycbc.inference.sampler.emcee_pt.EmceePTSampler.base_shape" title="Permalink to this definition">¶</a></dt>
-<dd><p>What shape the sampler’s samples arrays are in, excluding
-the iterations dimension.</p>
-<p>For example, if a sampler uses 20 walkers and 3 temperatures, this
-would be <code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">20)</span></code>. If a sampler only uses a single walker and no
-temperatures this would be <code class="docutils literal notranslate"><span class="pre">()</span></code>.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="pycbc.inference.sampler.emcee_pt.EmceePTSampler.betas">
@@ -1383,11 +1520,7 @@ construct the ladder with “ntemps” geometrically spaced temperatures.</p>
 <dl class="attribute">
 <dt id="pycbc.inference.sampler.emcee_pt.EmceePTSampler.io">
 <code class="descname">io</code><a class="headerlink" href="#pycbc.inference.sampler.emcee_pt.EmceePTSampler.io" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class that inherits from <code class="docutils literal notranslate"><span class="pre">BaseInferenceFile</span></code> to handle IO with
-an hdf file.</p>
-<p>This should be a class, not an instance of class, so that the sampler
-can initialize it when needed.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="pycbc.inference.sampler.emcee_pt.EmceePTSampler.model_stats">
@@ -1544,11 +1677,7 @@ evidence.</p>
 <dl class="attribute">
 <dt id="pycbc.inference.sampler.multinest.MultinestSampler.io">
 <code class="descname">io</code><a class="headerlink" href="#pycbc.inference.sampler.multinest.MultinestSampler.io" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class that inherits from <code class="docutils literal notranslate"><span class="pre">BaseInferenceFile</span></code> to handle IO with
-an hdf file.</p>
-<p>This should be a class, not an instance of class, so that the sampler
-can initialize it when needed.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="pycbc.inference.sampler.multinest.MultinestSampler.loglikelihood">
@@ -1695,7 +1824,7 @@ sampler class to load. That sampler’s <code class="docutils literal notranslat
     <p>
         &copy; Copyright 2015, 2016, 2017, Alexander Nitz, Ian Harry, Christopher M. Biwer, Duncan A.  Brown, Josh Willis, and Tito Dal Canton
       <span class="lastupdated">
-        Last updated on Jul 26, 2019.
+        Last updated on Jul 28, 2019.
       </span>
 
     </p>

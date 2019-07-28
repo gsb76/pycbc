@@ -28,6 +28,14 @@ pycbc.inference.sampler.base\_multitemper module
     :undoc-members:
     :show-inheritance:
 
+pycbc.inference.sampler.dynesty module
+--------------------------------------
+
+.. automodule:: pycbc.inference.sampler.dynesty
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pycbc.inference.sampler.emcee module
 ------------------------------------
 
