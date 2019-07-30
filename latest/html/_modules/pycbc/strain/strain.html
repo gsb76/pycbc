@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pycbc.strain.strain &mdash; PyCBC 1.14.dev2 documentation</title>
+  <title>pycbc.strain.strain &mdash; PyCBC 433014 documentation</title>
   
 
   
@@ -60,6 +60,10 @@
 
           
             
+            
+              <div class="version">
+                None
+              </div>
             
           
 
@@ -298,13 +302,12 @@
     <span class="n">pycbc</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftw</span><span class="o">.</span><span class="n">set_measure_level</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">high_freq_cutoff</span><span class="p">:</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Autogating: downsampling strain&#39;</span><span class="p">)</span>
         <span class="n">strain</span> <span class="o">=</span> <span class="n">resample_to_delta_t</span><span class="p">(</span><span class="n">strain</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="n">high_freq_cutoff</span><span class="p">,</span>
                                      <span class="n">method</span><span class="o">=</span><span class="s1">&#39;ldas&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">strain</span> <span class="o">=</span> <span class="n">strain</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Autogating: tapering strain&#39;</span><span class="p">)</span>
+    <span class="c1"># taper strain</span>
     <span class="n">corrupt_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">corrupt_time</span> <span class="o">*</span> <span class="n">strain</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
     <span class="n">w</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">corrupt_length</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">corrupt_length</span><span class="p">)</span>
     <span class="n">strain</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">corrupt_length</span><span class="p">]</span> <span class="o">*=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">strain</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
@@ -324,7 +327,7 @@
             <span class="n">delta_t</span><span class="o">=</span><span class="n">strain</span><span class="o">.</span><span class="n">delta_t</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">pad_epoch</span><span class="p">)</span>
     <span class="n">strain_pad</span><span class="p">[</span><span class="n">pad_start</span><span class="p">:</span><span class="n">pad_end</span><span class="p">]</span> <span class="o">=</span> <span class="n">strain</span><span class="p">[:]</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Autogating: estimating PSD&#39;</span><span class="p">)</span>
+    <span class="c1"># estimate the PSD</span>
     <span class="n">psd</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">psd</span><span class="o">.</span><span class="n">welch</span><span class="p">(</span><span class="n">strain</span><span class="p">[</span><span class="n">corrupt_length</span><span class="p">:(</span><span class="nb">len</span><span class="p">(</span><span class="n">strain</span><span class="p">)</span><span class="o">-</span><span class="n">corrupt_length</span><span class="p">)],</span>
                           <span class="n">seg_len</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">psd_duration</span> <span class="o">*</span> <span class="n">strain</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">),</span>
                           <span class="n">seg_stride</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">psd_stride</span> <span class="o">*</span> <span class="n">strain</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">),</span>
@@ -341,23 +344,20 @@
         <span class="n">kmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">high_freq_cutoff</span> <span class="o">/</span> <span class="n">psd</span><span class="o">.</span><span class="n">delta_f</span><span class="p">)</span>
         <span class="n">psd</span><span class="p">[</span><span class="n">kmax</span><span class="p">:]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">inf</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Autogating: time -&gt; frequency&#39;</span><span class="p">)</span>
+    <span class="c1"># whiten</span>
     <span class="n">strain_tilde</span> <span class="o">=</span> <span class="n">strain_pad</span><span class="o">.</span><span class="n">to_frequencyseries</span><span class="p">()</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Autogating: whitening&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">high_freq_cutoff</span><span class="p">:</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="n">high_freq_cutoff</span> <span class="o">-</span> <span class="n">low_freq_cutoff</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="n">strain</span><span class="o">.</span><span class="n">sample_rate</span> <span class="o">/</span> <span class="mf">2.</span> <span class="o">-</span> <span class="n">low_freq_cutoff</span>
     <span class="n">strain_tilde</span> <span class="o">*=</span> <span class="p">(</span><span class="n">psd</span> <span class="o">*</span> <span class="n">norm</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Autogating: frequency -&gt; time&#39;</span><span class="p">)</span>
     <span class="n">strain_pad</span> <span class="o">=</span> <span class="n">strain_tilde</span><span class="o">.</span><span class="n">to_timeseries</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">output_intermediates</span><span class="p">:</span>
         <span class="n">strain_pad</span><span class="p">[</span><span class="n">pad_start</span><span class="p">:</span><span class="n">pad_end</span><span class="p">]</span><span class="o">.</span><span class="n">save_to_wav</span><span class="p">(</span><span class="s1">&#39;strain_whitened.wav&#39;</span><span class="p">)</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Autogating: computing magnitude&#39;</span><span class="p">)</span>
     <span class="n">mag</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">strain_pad</span><span class="p">[</span><span class="n">pad_start</span><span class="p">:</span><span class="n">pad_end</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="n">output_intermediates</span><span class="p">:</span>
@@ -369,7 +369,7 @@
     <span class="n">mag</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">corrupt_length</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">mag</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="n">corrupt_length</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Autogating: finding loud peaks&#39;</span><span class="p">)</span>
+    <span class="c1"># find peaks and their times</span>
     <span class="n">indices</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mag</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">cluster_idx</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">findchirp_cluster_over_window</span><span class="p">(</span>
             <span class="n">indices</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mag</span><span class="p">[</span><span class="n">indices</span><span class="p">]),</span>
@@ -1403,7 +1403,7 @@
                  <span class="n">psd_segment_length</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
                  <span class="n">psd_inverse_length</span><span class="o">=</span><span class="mf">3.5</span><span class="p">,</span>
                  <span class="n">trim_padding</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
-                 <span class="n">autogating_threshold</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                 <span class="n">autogating_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">autogating_cluster</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
                  <span class="n">autogating_window</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
                  <span class="n">autogating_pad</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
@@ -1450,7 +1450,7 @@
 <span class="sd">        trim_padding: {float, 0.25}, Optional</span>
 <span class="sd">            Amount of padding in seconds to give for truncated the overwhitened</span>
 <span class="sd">            data stream.</span>
-<span class="sd">        autogating_threshold: {float, 100}, Optional</span>
+<span class="sd">        autogating_threshold: {float, None}, Optional</span>
 <span class="sd">            Sigma deviation required to cause gating of data</span>
 <span class="sd">        autogating_cluster: {float, 0.25}, Optional</span>
 <span class="sd">            Seconds to cluster possible gating locations</span>
@@ -1811,7 +1811,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">strain</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">strain</span><span class="p">)</span> <span class="o">-</span> <span class="n">csize</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">corruption</span><span class="p">:]</span> <span class="o">=</span> <span class="n">strain</span><span class="p">[:]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">strain</span><span class="o">.</span><span class="n">start_time</span> <span class="o">+=</span> <span class="n">blocksize</span>
 
-        <span class="c1"># apply gating if need be: NOT YET IMPLEMENTED</span>
+        <span class="c1"># apply gating if needed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autogating_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">glitch_times</span> <span class="o">=</span> <span class="n">detect_loud_glitches</span><span class="p">(</span>
+                    <span class="n">strain</span><span class="p">[:</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">corruption</span><span class="p">],</span>
+                    <span class="n">psd_duration</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span> <span class="n">psd_stride</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
+                    <span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">autogating_threshold</span><span class="p">,</span>
+                    <span class="n">cluster_window</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">autogating_cluster</span><span class="p">,</span>
+                    <span class="n">low_freq_cutoff</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">highpass_frequency</span><span class="p">,</span>
+                    <span class="n">corrupt_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">autogating_window</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">autogating_pad</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">glitch_times</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Autogating </span><span class="si">%s</span><span class="s1"> at </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">detector</span><span class="p">,</span>
+                             <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">gt</span> <span class="k">for</span> <span class="n">gt</span> <span class="ow">in</span> <span class="n">glitch_times</span><span class="p">]))</span>
+                <span class="n">gate_params</span> <span class="o">=</span> <span class="p">[[</span><span class="n">gt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">autogating_window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">autogating_pad</span><span class="p">]</span> \
+                               <span class="k">for</span> <span class="n">gt</span> <span class="ow">in</span> <span class="n">glitch_times</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">strain</span> <span class="o">=</span> <span class="n">gate_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">strain</span><span class="p">,</span> <span class="n">gate_params</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">psd</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait_duration</span> <span class="o">&lt;=</span><span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">recalculate_psd</span><span class="p">()</span>
 
@@ -1883,7 +1898,7 @@
     <p>
         &copy; Copyright 2015, 2016, 2017, Alexander Nitz, Ian Harry, Christopher M. Biwer, Duncan A.  Brown, Josh Willis, and Tito Dal Canton
       <span class="lastupdated">
-        Last updated on Jul 29, 2019.
+        Last updated on Jul 30, 2019.
       </span>
 
     </p>
