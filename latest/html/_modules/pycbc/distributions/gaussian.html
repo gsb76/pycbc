@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pycbc.distributions.gaussian &mdash; PyCBC 1.14.dev2 documentation</title>
+  <title>pycbc.distributions.gaussian &mdash; PyCBC 6d3b88 documentation</title>
   
 
   
@@ -60,6 +60,10 @@
 
           
             
+            
+              <div class="version">
+                None
+              </div>
             
           
 
@@ -340,21 +344,46 @@
     <span class="k">def</span> <span class="nf">var</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var</span>
 
-<div class="viewcode-block" id="Gaussian.cdfinv"><a class="viewcode-back" href="../../../pycbc.distributions.html#pycbc.distributions.gaussian.Gaussian.cdfinv">[docs]</a>    <span class="k">def</span> <span class="nf">cdfinv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return inverse of cdf to map unit interval to parameter bounds.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span><span class="p">[</span><span class="n">param</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span><span class="p">[</span><span class="n">param</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">_normalcdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The CDF of the normal distribution, without bounds.&quot;&quot;&quot;</span>
         <span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
-        <span class="n">sigma</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_var</span><span class="p">[</span><span class="n">param</span><span class="p">])</span>
-        <span class="n">phi_a</span> <span class="o">=</span> <span class="n">erf</span><span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">sigma</span><span class="p">)</span>
-        <span class="n">phi_b</span> <span class="o">=</span> <span class="n">erf</span><span class="p">((</span><span class="n">b</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">sigma</span><span class="p">)</span>
-        <span class="n">z</span> <span class="o">=</span> <span class="n">phi_b</span> <span class="o">-</span> <span class="n">phi_a</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+        <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">erf</span><span class="p">((</span><span class="n">value</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">var</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">))</span>
 
-        <span class="n">new_value</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">erfinv</span><span class="p">(</span><span class="n">value</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">erf</span><span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">sigma</span><span class="p">))</span>
+<div class="viewcode-block" id="Gaussian.cdf"><a class="viewcode-back" href="../../../pycbc.distributions.html#pycbc.distributions.gaussian.Gaussian.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the CDF of the given parameter value.&quot;&quot;&quot;</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="o">!=</span> <span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+            <span class="n">phi_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalcdf</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">phi_a</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">if</span> <span class="n">b</span> <span class="o">!=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+            <span class="n">phi_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalcdf</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">phi_b</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="n">phi_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalcdf</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">phi_x</span> <span class="o">-</span> <span class="n">phi_a</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">phi_b</span> <span class="o">-</span> <span class="n">phi_a</span><span class="p">)</span></div>
 
-        <span class="k">return</span> <span class="n">new_value</span></div>
+    <span class="k">def</span> <span class="nf">_normalcdfinv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The inverse CDF of the normal distribution, without bounds.&quot;&quot;&quot;</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">mu</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">var</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">erfinv</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">)</span>
 
+<div class="viewcode-block" id="Gaussian.cdfinv"><a class="viewcode-back" href="../../../pycbc.distributions.html#pycbc.distributions.gaussian.Gaussian.cdfinv">[docs]</a>    <span class="k">def</span> <span class="nf">cdfinv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return inverse of the CDF.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="o">!=</span> <span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+            <span class="n">phi_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalcdf</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">phi_a</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">if</span> <span class="n">b</span> <span class="o">!=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+            <span class="n">phi_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalcdf</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">phi_b</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="n">adjusted_p</span> <span class="o">=</span> <span class="n">phi_a</span> <span class="o">+</span> <span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="n">phi_b</span> <span class="o">-</span> <span class="n">phi_a</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalcdfinv</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">adjusted_p</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the pdf at the given values. The keyword arguments must</span>
