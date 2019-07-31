@@ -100,10 +100,10 @@ pycbc.results.str\_utils module
     :undoc-members:
     :show-inheritance:
 
-pycbc.results.table module
---------------------------
+pycbc.results.table\_utils module
+---------------------------------
 
-.. automodule:: pycbc.results.table
+.. automodule:: pycbc.results.table_utils
     :members:
     :undoc-members:
     :show-inheritance:

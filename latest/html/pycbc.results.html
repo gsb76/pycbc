@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pycbc.results package &mdash; PyCBC 1.14.dev2 documentation</title>
+  <title>pycbc.results package &mdash; PyCBC 934c82 documentation</title>
   
 
   
@@ -62,6 +62,10 @@
 
           
             
+            
+              <div class="version">
+                None
+              </div>
             
           
 
@@ -495,7 +499,7 @@ PyCBC.</p>
 <dl class="class">
 <dt id="pycbc.results.metadata.MetaParser">
 <em class="property">class </em><code class="descclassname">pycbc.results.metadata.</code><code class="descname">MetaParser</code><a class="reference internal" href="_modules/pycbc/results/metadata.html#MetaParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.results.metadata.MetaParser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/html.parser.html#html.parser.HTMLParser" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">html.parser.HTMLParser</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">HTMLParser.HTMLParser</span></code></p>
 <dl class="method">
 <dt id="pycbc.results.metadata.MetaParser.handle_data">
 <code class="descname">handle_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/results/metadata.html#MetaParser.handle_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.results.metadata.MetaParser.handle_data" title="Permalink to this definition">¶</a></dt>
@@ -1171,36 +1175,12 @@ number of significant figures.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-pycbc.results.table">
-<span id="pycbc-results-table-module"></span><h2>pycbc.results.table module<a class="headerlink" href="#module-pycbc.results.table" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pycbc.results.table_utils">
+<span id="pycbc-results-table-utils-module"></span><h2>pycbc.results.table_utils module<a class="headerlink" href="#module-pycbc.results.table_utils" title="Permalink to this headline">¶</a></h2>
 <p>This module provides functions to generate sortable html tables</p>
 <dl class="function">
-<dt id="pycbc.results.table.static_table">
-<code class="descclassname">pycbc.results.table.</code><code class="descname">static_table</code><span class="sig-paren">(</span><em>data</em>, <em>titles=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/results/table.html#static_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.results.table.static_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an html tableo of this data</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>two-dimensional numpy string array</em>) – Array containing the cell values</li>
-<li><strong>titles</strong> (<em>numpy array</em>) – Vector str of titles</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>html_table</strong> – A string containing the html table.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pycbc.results.table.table">
-<code class="descclassname">pycbc.results.table.</code><code class="descname">table</code><span class="sig-paren">(</span><em>columns</em>, <em>names</em>, <em>page_size=None</em>, <em>format_strings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/results/table.html#table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.results.table.table" title="Permalink to this definition">¶</a></dt>
+<dt id="pycbc.results.table_utils.html_table">
+<code class="descclassname">pycbc.results.table_utils.</code><code class="descname">html_table</code><span class="sig-paren">(</span><em>columns</em>, <em>names</em>, <em>page_size=None</em>, <em>format_strings=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/results/table_utils.html#html_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.results.table_utils.html_table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an html table of this data</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1216,6 +1196,30 @@ number of significant figures.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>html_table</strong> – A str containing the html code to display a table of this data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pycbc.results.table_utils.static_table">
+<code class="descclassname">pycbc.results.table_utils.</code><code class="descname">static_table</code><span class="sig-paren">(</span><em>data</em>, <em>titles=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/results/table_utils.html#static_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.results.table_utils.static_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an html tableo of this data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>two-dimensional numpy string array</em>) – Array containing the cell values</li>
+<li><strong>titles</strong> (<em>numpy array</em>) – Vector str of titles</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>html_table</strong> – A string containing the html table.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></p>
