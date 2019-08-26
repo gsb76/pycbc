@@ -1,4 +1,5 @@
 import numpy as np
+import lal
 import copy
 from pycbc.types import TimeSeries
 
@@ -88,3 +89,61 @@ def apply_tapering(td_waveform, e):
     for n in range (0, bound):
         tapered_waveform[n] = one_sided_planck_taper(e, n, N) * td_waveform[n]
     return tapered_waveform
+
+def ddeltaphidf_early_inspiral(f, total_mass, beta, b):
+    """Evaluates the derivative of the phase change in the early inspiral with
+    respect to the frequency at some frequency f. The phase change in the early
+    inspiral is given by beta * v ** b, where v = (pi * total_mass * f) ** (1/3)
+    The derivative is then given by beta * b * v ** (b-1) * dv/df, where dv/df
+    is given by (1/3) * (pi * total_mass * f) ** (-2/3) * pi * total_mass,
+    or (1/3) * v ** -2 * pi * total_mass.
+
+    Parameters
+    ----------
+    f : float
+        The frequency, in Hz, at which to evaluate the derivative.
+    total_mass : float
+        The total mass of the binary, in solar masses.
+    beta : float
+        The ppE parameter beta.
+    b : float
+        The ppE parameter b.
+
+    Returns
+    -------
+    deriv : float
+         The value of the derivative at the frequency f.
+    """
+
+    total_mass_in_seconds = total_mass * lal.MTSUN_SI
+    v = pow(np.pi * total_mass_in_seconds * f, 1. / 3.)
+    deriv = b * beta * np.pi * total_mass_in_seconds * pow(v, b - 3) / 3.0
+    return deriv
+
+def ddeltaphidf_late_inspiral(f, total_mass, epsilon):
+    """Evaluates the derivative of the phase change in the late inspiral with
+    respect to the frequency at some frequency f. The phase change in the late
+    inspiral is given by epsilon * v, where v = (pi * total_mass * f) ** (1/3).
+    The derivative is then given by epsilon * dv/df, where dv/df
+    is given by (1/3) * (pi * total_mass * f) ** (-2/3) * pi * total_mass,
+    or (1/3) * v ** -2 * pi * total_mass.
+
+    Parameters
+    ----------
+    f : float
+        The frequency, in Hz, at which to evaluate the derivative.
+    total_mass : float
+        The total mass of the binary, in solar masses.
+    epsilon : float
+        The ppE parameter epsilon.
+
+    Returns
+    -------
+    deriv : float
+         The value of the derivative at the frequency f.
+    """
+
+    total_mass_in_seconds = total_mass * lal.MTSUN_SI
+    v = pow(np.pi * total_mass_in_seconds * f, 1. / 3.)
+    deriv = epsilon * np.pi * total_mass_in_seconds * pow(v, -2) / 3.0
+    return deriv
