@@ -164,9 +164,8 @@ def light_ring_frequency_in_hz(total_mass):
 
     c = 2.998e8 # m/s
     GM_sun = 1.327e20 # m^3/s^2
-    f_LR c**3 / (6 * np.pi * GM_sun * total_mass)
+    f_LR = c**3 / (6 * np.pi * GM_sun * total_mass)
     return f_LR
-
 
 def ringdown_frequency(fd_waveform, total_mass):
     """Numerically finds the ringdown frequency, f_RD, given a frequency
@@ -195,7 +194,7 @@ def ringdown_frequency(fd_waveform, total_mass):
     f_RD = fd_waveform.sample_frequencies[mindex + light_ring_index]
     return f_RD
 
-def apply_ppe_correction(fd_waveform, total_mass, beta, b, f_low, epsilon, delta_f):
+def apply_ppe_correction(fd_waveform, total_mass, beta, b, f_lower, epsilon, delta_f):
     """Applies the parameterized post-Einsteinian corrections to a waveform
     in the frequency domain such that the derivative of the phase is continuous
     across the different frequency regimes, where a different correction is
@@ -226,6 +225,9 @@ def apply_ppe_correction(fd_waveform, total_mass, beta, b, f_low, epsilon, delta
         The ppE parameter beta.
     b : float
         The ppE parameter b.
+    f_lower : float
+        The frequency at which the physical waveform begins. The content of
+        the waveform below this frequency is unphysical.
     epsilon : float
         The ppE parameter epsilon.
     delta_f : float
@@ -233,14 +235,14 @@ def apply_ppe_correction(fd_waveform, total_mass, beta, b, f_low, epsilon, delta
 
     Returns
     -------
-    corrected_fd_waveform : FrequencySeries
+    new_fd_waveform : FrequencySeries
          The frequency domain waveform of the coalescence, after applying
          the ppE corrections.
     """
 
     total_mass_in_seconds = total_mass * lal.MTSUN_SI
     pi_M = np.pi * total_mass_in_seconds
-    corrected_fd_waveform = fd_waveform.copy()
+    new_fd_waveform = fd_waveform.copy()
 
     #  Defines up to where to apply the beta-ppe correction as well as up
     #  to where to apply the epsilon-ppe correction.
@@ -249,14 +251,14 @@ def apply_ppe_correction(fd_waveform, total_mass, beta, b, f_low, epsilon, delta
 
     #  Defines the boundaries of the transition regions:
     #  Transition region between No Correction and Beta Correction:
-    f_1 = f_low - 0.5 * delta_f
-    f_2 = f_low + 0.5 * delta_f
+    f_1 = f_lower - 0.5 * delta_f
+    f_2 = f_lower + 0.5 * delta_f
     #  Transition region between Beta Correction and Epsilon Correction:
     f_3 = freq_IM_begin - 0.5 * delta_f
     f_4 = freq_IM_begin + 0.5 * delta_f
     #  Transition region between Epsilon Correction and Constant Correction:
     f_5 = freq_IM_end - 0.5 * delta_f
-    f_6 = freq_IM_end + 0.5 * delta_f 
+    f_6 = freq_IM_end + 0.5 * delta_f
 
     #  The values of the derivatives of the phase change at each endpoint of
     #  the transition region. The derivative is then linearly interpolated
@@ -264,10 +266,10 @@ def apply_ppe_correction(fd_waveform, total_mass, beta, b, f_low, epsilon, delta
     #  returns the integral of the linear interpolant, which is the phase
     #  change itself.
     ddelphidf_1 = 0.0
-    ddelphidf_2 = dphase_df_early_inspiral(f_2, total_mass, beta, b)
-    ddelphidf_3 = dphase_df_early_inspiral(f_3, total_mass, beta, b)
-    ddelphidf_4 = dphase_df_late_inspiral(f_4, total_mass, epsilon)
-    ddelphidf_5 = dphase_df_late_inspiral(f_5, total_mass, epsilon)
+    ddelphidf_2 = ddeltaphidf_early_inspiral(f_2, total_mass, beta, b)
+    ddelphidf_3 = ddeltaphidf_early_inspiral(f_3, total_mass, beta, b)
+    ddelphidf_4 = ddeltaphidf_late_inspiral(f_4, total_mass, epsilon)
+    ddelphidf_5 = ddeltaphidf_late_inspiral(f_5, total_mass, epsilon)
     ddelphidf_6 = 0.0
 
     #  As `derivative_interpolant` returns an integral, it is only defined up
@@ -290,42 +292,43 @@ def apply_ppe_correction(fd_waveform, total_mass, beta, b, f_low, epsilon, delta
     phase_change_6 = delphi_6 + phase_change_5 
    
     # Apply the ppE correction over the various ranges: 
-    for i in range(0, len(corrected_fd_waveform.data)):
-        freq_i = corrected_fd_waveform.sample_frequencies.data[i]
+    for i in range(0, len(new_fd_waveform.data)):
+        freq_i = new_fd_waveform.sample_frequencies.data[i]
         vel_i = pow(pi_M * freq_i, 1.0/3.0)
+        phase_correction = 1.0
 
         # Transition from No Correction to Beta Correction:
-        if(freq_i > f_1 and freq_i < f_2):
+        if(freq_i >= f_1 and freq_i < f_2):
             phase_change = \
               derivative_interpolant(freq_i, ddelphidf_1, ddelphidf_2, f_1, f_2)
             phase_correction = np.exp((phase_change + phase_change_1) * 1j)
 
         #  Apply Beta Correction:
-        if(freq_i > f_2 and freq_i < f_3):
+        if(freq_i >= f_2 and freq_i < f_3):
             phase_change = beta * pow(vel_i, b)
             phase_correction = np.exp((phase_change + phase_change_2) * 1j)
 
         # Transition from Beta Correction to Epsilon Correction:
-        if(freq_i > f_3 and freq_i < f_4):
+        if(freq_i >= f_3 and freq_i < f_4):
             phase_change = \
               derivative_interpolant(freq_i, ddelphidf_3, ddelphidf_4, f_3, f_4)
             phase_correction = np.exp((phase_change + phase_change_3) * 1j)
 
         #  Apply Epsilon Correction:
-        if(freq_i > f_4 and freq_i < f_5):
+        if(freq_i >= f_4 and freq_i < f_5):
             phase_change = epsilon * vel_i
-            phase_correction = np.exp(phase_change + phase_change_4 * 1j)
+            phase_correction = np.exp((phase_change + phase_change_4) * 1j)
 
         # Transition from Epsilon Correction to Constant Correction:
-        if(freq_i > f_5 and freq_i < f_6):
+        if(freq_i >= f_5 and freq_i < f_6):
             phase_change = \
               derivative_interpolant(freq_i, ddelphidf_5, ddelphidf_6, f_5, f_6)
             phase_correction = np.exp((phase_change + phase_change_5) * 1j)
 
         # Apply Constant Correction:  
-        if(freq_i > f_6):
+        if(freq_i >= f_6):
             phase_correction = np.exp(phase_change_6 * 1j)
 
-      corrected_fd_waveform.data[i] = \
-        corrected_fd_waveform.data[i] * phase_correction
-    return corrected_fd_waveform 
+        new_fd_waveform.data[i] = new_fd_waveform.data[i] * phase_correction
+
+    return new_fd_waveform
