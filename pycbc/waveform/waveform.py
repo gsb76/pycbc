@@ -36,6 +36,7 @@ from pycbc.fft import fft
 from pycbc import pnutils
 from pycbc.waveform import utils as wfutils
 from pycbc.waveform import parameters
+import pycbc.ppe.ppe_tools as ppe
 from pycbc.filter import interpolate_complex_frequency, resample_to_delta_t
 import pycbc
 from .spa_tmplt import spa_tmplt, spa_tmplt_norm, spa_tmplt_end, \
@@ -210,11 +211,26 @@ def _lalsim_fd_waveform(**p):
                lal_pars,
                _lalsim_enum[p['approximant']])
 
+    # The parameters passed into this function are contained in `p`.
+    total_mass = float(p['mass1']) + float(p['mass2'])
+    beta = float(p['ppe_beta'])
+    b = float(p['ppe_b'])
+    f_lower = float(p['f_lower'])
+    epsilon = float(p['ppe_epsilon'])
+    delta_f = 4.0
+
     hp = FrequencySeries(hp1.data.data[:], delta_f=hp1.deltaF,
                             epoch=hp1.epoch)
 
     hc = FrequencySeries(hc1.data.data[:], delta_f=hc1.deltaF,
                             epoch=hc1.epoch)
+
+    hp = ppe.apply_ppe_correction(hp, total_mass, beta, b, f_lower,
+                            epsilon, delta_f)
+
+    hc = ppe.apply_ppe_correction(hc, total_mass, beta, b, f_lower,
+                            epsilon, delta_f)
+
     #lal.DestroyDict(lal_pars)
     return hp, hc
 
@@ -1090,4 +1106,4 @@ __all__ = ["get_td_waveform", "get_fd_waveform", "get_fd_waveform_sequence",
            "get_waveform_filter_length_in_time", "get_sgburst_waveform",
            "print_sgburst_approximants", "sgburst_approximants",
            "td_waveform_to_fd_waveform", "get_two_pol_waveform_filter",
-           "NoWaveformError", "get_td_waveform_from_fd"]
+           "NoWaveformError", "get_td_waveform_from_fd", "_lalsim_fd_waveform"]

@@ -185,6 +185,11 @@ def ringdown_frequency(fd_waveform, total_mass):
          The ringdown frequency, in Hz.
     """
 
+    print(fd_waveform.sample_frequencies.data)
+    print("Min of frequencies = " + str(np.min(fd_waveform.sample_frequencies.data)))
+    print("Light ring frequency = " + str(light_ring_frequency_in_hz(total_mass)))
+    print(np.where(fd_waveform.sample_frequencies.data \
+      > light_ring_frequency_in_hz(total_mass)))
     light_ring_index = np.where(fd_waveform.sample_frequencies.data \
       > light_ring_frequency_in_hz(total_mass))[0][0]
     four_times_light_ring_index = np.where(fd_waveform.sample_frequencies.data \
@@ -292,43 +297,42 @@ def apply_ppe_correction(fd_waveform, total_mass, beta, b, f_lower, epsilon, del
     phase_change_6 = delphi_6 + phase_change_5 
    
     # Apply the ppE correction over the various ranges: 
-    for i in range(0, len(new_fd_waveform.data)):
-        freq_i = new_fd_waveform.sample_frequencies.data[i]
-        vel_i = pow(pi_M * freq_i, 1.0/3.0)
-        phase_correction = 1.0
+    freqs = new_fd_waveform.sample_frequencies.data
+    vels = pow(pi_M * freqs, 1.0/3.0)
+    phase_correction = np.ones_like(freqs, dtype = complex)
 
-        # Transition from No Correction to Beta Correction:
-        if(freq_i >= f_1 and freq_i < f_2):
-            phase_change = \
-              derivative_interpolant(freq_i, ddelphidf_1, ddelphidf_2, f_1, f_2)
-            phase_correction = np.exp((phase_change + phase_change_1) * 1j)
+    # Transition from No Correction to Beta Correction:
+    mask = (freqs >= f_1) & (freqs < f_2)
+    phase_change = \
+        derivative_interpolant(freqs[mask], ddelphidf_1, ddelphidf_2, f_1, f_2)
+    phase_correction[mask] = np.exp((phase_change + phase_change_1) * 1j)
 
-        #  Apply Beta Correction:
-        if(freq_i >= f_2 and freq_i < f_3):
-            phase_change = beta * pow(vel_i, b)
-            phase_correction = np.exp((phase_change + phase_change_2) * 1j)
+    #  Apply Beta Correction:
+    mask = (freqs >= f_2) & (freqs < f_3)
+    phase_change = beta * pow(vels[mask], b)
+    phase_correction[mask] = np.exp((phase_change + phase_change_2) * 1j)
 
-        # Transition from Beta Correction to Epsilon Correction:
-        if(freq_i >= f_3 and freq_i < f_4):
-            phase_change = \
-              derivative_interpolant(freq_i, ddelphidf_3, ddelphidf_4, f_3, f_4)
-            phase_correction = np.exp((phase_change + phase_change_3) * 1j)
+    # Transition from Beta Correction to Epsilon Correction:
+    mask = (freqs >= f_3) & (freqs < f_4)
+    phase_change = \
+        derivative_interpolant(freqs[mask], ddelphidf_3, ddelphidf_4, f_3, f_4)
+    phase_correction[mask] = np.exp((phase_change + phase_change_3) * 1j)
 
-        #  Apply Epsilon Correction:
-        if(freq_i >= f_4 and freq_i < f_5):
-            phase_change = epsilon * vel_i
-            phase_correction = np.exp((phase_change + phase_change_4) * 1j)
+    #  Apply Epsilon Correction:
+    mask = (freqs >= f_4) & (freqs < f_5)
+    phase_change = epsilon * vels[mask]
+    phase_correction[mask] = np.exp((phase_change + phase_change_4) * 1j)
 
-        # Transition from Epsilon Correction to Constant Correction:
-        if(freq_i >= f_5 and freq_i < f_6):
-            phase_change = \
-              derivative_interpolant(freq_i, ddelphidf_5, ddelphidf_6, f_5, f_6)
-            phase_correction = np.exp((phase_change + phase_change_5) * 1j)
+    # Transition from Epsilon Correction to Constant Correction:
+    mask = (freqs >= f_5) & ( freqs < f_6)
+    phase_change = \
+        derivative_interpolant(freqs[mask], ddelphidf_5, ddelphidf_6, f_5, f_6)
+    phase_correction[mask] = np.exp((phase_change + phase_change_5) * 1j)
 
-        # Apply Constant Correction:  
-        if(freq_i >= f_6):
-            phase_correction = np.exp(phase_change_6 * 1j)
+    # Apply Constant Correction:
+    mask = (freqs >= f_6)
+    phase_correction[mask] = np.exp(phase_change_6 * 1j)
 
-        new_fd_waveform.data[i] = new_fd_waveform.data[i] * phase_correction
+    new_fd_waveform.data = new_fd_waveform.data * phase_correction
 
     return new_fd_waveform
