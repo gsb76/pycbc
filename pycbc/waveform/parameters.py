@@ -193,6 +193,18 @@ eccentricity = Parameter("eccentricity",
                 dtype=float, default=0., label=r"$e$",
                 description="Eccentricity.")
 
+ppe_b = Parameter("ppe_b",
+                dtype=float, default=0., label=r"$b$",
+                description="The ppE parameter b.")
+
+ppe_beta = Parameter("ppe_beta",
+                dtype=float, default=0., label=r"$beta$",
+                description="The ppE parameter beta.")
+
+ppe_epsilon = Parameter("ppe_epsilon",
+                dtype=float, default=0., label=r"$epsilon$",
+                description="The ppE parameter epsilon.")
+
 # derived parameters (these are not used for waveform generation) for masses
 mchirp = Parameter("mchirp",
                 dtype=float, label=r"$\mathcal{M}~(\mathrm{M}_\odot)$",
@@ -476,8 +488,9 @@ extrinsic_params = orientation_params + location_params
 # by every waveform model
 cbc_intrinsic_params = ParameterList\
     ([mass1, mass2, spin1x, spin1y, spin1z, spin2x, spin2y, spin2z,
-      eccentricity, lambda1, lambda2, dquad_mon1, dquad_mon2, lambda_octu1,
-      lambda_octu2, quadfmode1, quadfmode2, octufmode1, octufmode2])
+      eccentricity, ppe_b, ppe_beta, ppe_epsilon, lambda1, lambda2,
+      dquad_mon1, dquad_mon2, lambda_octu1, lambda_octu2,
+      quadfmode1, quadfmode2, octufmode1, octufmode2])
 
 # the parameters of a cbc in the radiation frame
 cbc_rframe_params = cbc_intrinsic_params + orientation_params

@@ -5,7 +5,7 @@ import lal
 import pycbc
 import pycbc.ppe.ppe_tools as ppe
 from pycbc.types import TimeSeries
-from pycbc.waveform import get_td_waveform
+from pycbc.waveform import get_td_waveform, _lalsim_fd_waveform
 import unittest
 import numpy as np
 from utils import parse_args_all_schemes, simple_exit
@@ -153,6 +153,57 @@ class TestPPE(unittest.TestCase):
         self.assertAlmostEqual(-1.639700771035731e-21, new_hp_tap_tilde[80].real, delta = 1.0e-25)
         self.assertAlmostEqual(-9.465021656090846e-22, new_hp_tap_tilde[200].real, delta = 1.0e-25)
         self.assertAlmostEqual(1.2410412323990297e-21, new_hp_tap_tilde[300].real, delta = 1.0e-25)
+
+    def test_apply_ppe_correction2(self):
+        print("Entering test of interest.")
+        #  Tests that a dictionary can be created and passed to
+        #  `_lalsim_fd_waveform` and that this function returns.
+
+        p = {
+          "phase_order": -1,
+          "amplitude_order": -1,
+          "spin_order": -1,
+          "tidal_order": -1,
+          "eccentricity_order": -1,
+          "lambda1": None,
+          "lambda2": None,
+          "lambda_octu1": None,
+          "lambda_octu2": None,
+          "quadfmode1": None,
+          "quadfmode2": None,
+          "octufmode1": None,
+          "octufmode2": None,
+          "dquad_mon1": None,
+          "dquad_mon2": None,
+          "numrel_data": None,
+          "modes_choice": None,
+          "frame_axis": None,
+          "side_bands": None,
+          "mode_array": None,
+          "mass1": 20.0,
+          "mass2": 30.0,
+          "spin1x": 0.0,
+          "spin1y": 0.0,
+          "spin1z": 0.2,
+          "spin2x": 0.0,
+          "spin2y": 0.0,
+          "spin2z": 0.1,
+          "distance": 450,
+          "inclination": 0.0,
+          "coa_phase": 0.0,
+          "long_asc_nodes": 0.0,
+          "eccentricity": 0.0,
+          "mean_per_ano": 0.0,
+          "delta_f": 1.0/4096,
+          "f_lower": 20.0,
+          "f_final": 0,
+          "f_ref": 20.0,
+          "ppe_beta": 0.0,
+          "ppe_b" : 0.0,
+          "ppe_epsilon" : 0.0,
+          "approximant": "TaylorF2"}
+
+        hp, hc = _lalsim_fd_waveform(**p)
 
 suite = unittest.TestSuite()
 suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestPPE))
