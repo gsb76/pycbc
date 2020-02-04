@@ -22,6 +22,7 @@ from pycbc import filter as pyfilter
 from pycbc.waveform import NoWaveformError
 from pycbc.waveform import generator
 from pycbc.types import Array, FrequencySeries
+import pycbc.ppe.ppe_tools as ppe
 
 from .base_data import BaseDataModel
 
@@ -664,7 +665,8 @@ def create_waveform_generator(variable_params, data,
         approximant = static_params['approximant']
     except KeyError:
         raise ValueError("no approximant provided in the static args")
-    generator_function = generator.select_waveform_generator(approximant)
+    generator_function = generator.select_waveform_generator(
+        ppe.name_no_ppe(approximant))
     # get data parameters; we'll just use one of the data to get the
     # values, then check that all the others are the same
     delta_f = None

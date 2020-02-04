@@ -17,7 +17,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """ Runs a sampler to find the posterior distributions.
 """
-
+import sys
+import pdb
 import os
 import argparse
 import logging
@@ -165,6 +166,10 @@ with ctx:
     if injection_file \
         and "FROM_INJECTION" in dict(cp.items('static_params')).values():
         inj = InjectionSet(injection_file)
+        print("Printing InjectionSet object:")
+        print(inj)
+        sys.stdout.flush()
+        pdb.set_trace()
         for opt in cp.options(section='static_params'):
             if cp.get('static_params', opt) == "FROM_INJECTION" \
                                 and opt not in inj.table.fieldnames:

@@ -205,6 +205,11 @@ ppe_epsilon = Parameter("ppe_epsilon",
                 dtype=float, default=0., label=r"$epsilon$",
                 description="The ppE parameter epsilon.")
 
+# derived parameters for ppE
+ppe_beta = Parameter("ppe_beta",
+                dtype=float, default=0., label=r"$beta$",
+                description="The ppE parameter beta.")
+
 # derived parameters (these are not used for waveform generation) for masses
 mchirp = Parameter("mchirp",
                 dtype=float, label=r"$\mathcal{M}~(\mathrm{M}_\odot)$",

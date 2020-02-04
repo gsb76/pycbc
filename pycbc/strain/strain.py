@@ -16,6 +16,7 @@
 """
 This modules contains functions reading, generating, and segmenting strain data
 """
+#import sys
 import copy
 import logging, numpy
 import pycbc.noise
@@ -248,7 +249,7 @@ def from_cli(opt, dyn_range_fac=1, precision='single',
             strain = strain / l
 
         if opt.injection_file:
-            logging.info("Applying injections")
+            logging.info("Applying injections line 251")
             injector = InjectionSet(opt.injection_file)
             injections = \
                 injector.apply(strain, opt.channel_name[0:2],
@@ -370,7 +371,7 @@ def from_cli(opt, dyn_range_fac=1, precision='single',
                                 delta_t=1.0/opt.sample_rate,
                                 epoch=opt.gps_start_time)
         else:
-            logging.info("Making colored noise")
+            logging.info("Making colored noise line 373")
             from pycbc.noise.reproduceable import colored_noise
             lowfreq = opt.low_frequency_cutoff / 2.
             strain = colored_noise(strain_psd, opt.gps_start_time,
@@ -378,6 +379,9 @@ def from_cli(opt, dyn_range_fac=1, precision='single',
                                           seed=opt.fake_strain_seed,
                                           low_frequency_cutoff=lowfreq)
             strain = resample_to_delta_t(strain, 1.0/opt.sample_rate)
+            #print("The max of the strain is: ")
+            #print(numpy.amax(numpy.asarray(strain)))
+            #sys.stdout.flush()
 
         if not opt.channel_name and (opt.injection_file \
                                      or opt.sgburst_injection_file):
@@ -386,7 +390,7 @@ def from_cli(opt, dyn_range_fac=1, precision='single',
                              'simulated signals into fake strain')
 
         if opt.injection_file:
-            logging.info("Applying injections")
+            logging.info("Applying injections line 389")
             injector = InjectionSet(opt.injection_file)
             injections = \
                 injector.apply(strain, opt.channel_name[0:2],
@@ -420,7 +424,9 @@ def from_cli(opt, dyn_range_fac=1, precision='single',
     if opt.injection_file:
         strain.injections = injections
     strain.gating_info = gating_info
-
+    #print("Injection has been applied. the max now is: ")
+    #print(numpy.amax(numpy.asarray(strain)))
+    #sys.stdout.flush()
     return strain
 
 def from_cli_single_ifo(opt, ifo, inj_filter_rejector=None, **kwargs):

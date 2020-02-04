@@ -99,6 +99,8 @@ def max_posterior(lnps_per_walker, dim):
     is_burned_in : array of bool
         Whether or not a walker is burned in.
     """
+    #Remove after debugging burn-in failure:
+    #dim = dim - 1
     if len(lnps_per_walker.shape) != 2:
         raise ValueError("lnps_per_walker must have shape "
                          "nwalkers x niterations")

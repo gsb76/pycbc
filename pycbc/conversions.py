@@ -36,6 +36,7 @@ import lalsimulation as lalsim
 from pycbc.detector import Detector
 import pycbc.cosmology
 from .coordinates import spherical_to_cartesian as _spherical_to_cartesian
+import pycbc.ppe.ppe_tools as ppe
 
 #
 # =============================================================================
@@ -91,6 +92,20 @@ def sec_to_year(sec):
     """ Converts number of seconds to number of years """
     return sec / lal.YRJUL_SI
 
+
+
+#
+# =============================================================================
+#
+#                           CBC ppE functions
+#
+# =============================================================================
+#
+def mismatch_approximant(beta,mass1,mass2,b):
+    mtot = mass1+mass2
+    f_min = 1.0/10000.0 #20Hz, 30Hz corresponds to 3.0/20000.0
+    f_max = 0.018/mtot
+    return ppe.mismatchapproximant(beta,f_min,f_max,mtot,b)
 
 #
 # =============================================================================
@@ -1449,5 +1464,5 @@ __all__ = ['dquadmon_from_lambda', 'lambda_tilde',
            'final_mass_from_initial', 'final_spin_from_initial',
            'optimal_dec_from_detector', 'optimal_ra_from_detector',
            'chi_eff_from_spherical', 'chi_p_from_spherical',
-           'nltides_gw_phase_diff_isco',
+           'nltides_gw_phase_diff_isco', 'mismatch_approximant'
           ]
