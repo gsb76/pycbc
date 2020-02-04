@@ -3,6 +3,49 @@ import lal
 import copy
 from pycbc.types import TimeSeries
 
+def mismatchapproximant(beta,f_min,f_max,mtot,b):
+    vmax = pow(np.pi*mtot*f_max,1.0/3.0)
+    vmin = pow(np.pi*mtot*f_min,1.0/3.0)
+    if(b != 1 and b != 2 and b != 4):
+        denominator = 2*(-4+b)**2 * (-2+b)*vmax**8
+        A = -2*b*vmax**8*pow(vmin,2*b)
+        B = 8*(-2+b)*pow(vmax,4+b)*pow(vmin,4+b)
+        C = pow(vmax,2*b)*vmin**4*((-4+b)**2 *vmax**4-(-2+b)*b*vmin**4)
+        return b*beta**2*(A+B+C)/denominator
+    if(b==1):
+        return-beta**2*(vmin**2*(-2*vmax**6+9*vmax**4*vmin**2-8*vmax**3*vmin**3+vmin**6))/(18*vmax**6)
+    if(b==2):
+        return beta**2*(-3*vmax**4*vmin**4+4*vmax**2*vmin**6-vmin**8+4*vmax**4*vmin**4*np.log(vmax/vmin))/(2*vmax**4)
+    if(b==4):
+        return vmin**4*beta**2*(vmax**4-vmin**4-4*vmin**4*(1+2*np.log(vmax/vmin))*np.log(vmax/vmin))
+    
+
+def ppe_u(f_min,f_max):
+  return pow(f_min/f_max, 1.0/3.0)
+
+def little_q(b,u):
+  if(b != 2 and b != 4):
+    return 1.0 - 8.0/(4.0-b)*pow(u,b) + 4.0/(4.0-2.0*b)*pow(u,2.0*b)
+  elif(b == 2):
+    return (1.0-u**4) - 4.0*(u**2-u**4) - 4.0*(u**4)*np.log(u)
+  return (1.0-u**8) + 8.0*(u**4)*np.log(u)
+
+def big_q(b,u):
+  if(b != 2 and b != 4):
+    return little_q(b,u) - little_q(b,1.0)*u**4
+  return little_q(b,u)
+
+def beta_given_delta(delta, M_tot, f_min, f_max, b):
+  v_max = pow(np.pi * M_tot * f_max, 1.0/3.0)
+  u = ppe_u(f_min, f_max)
+  return np.sqrt(delta / big_q(b,u))/pow(v_max,b)
+
+def name_no_ppe(s):
+    if 'ppE' in s:
+        return s[0:-4]
+    else:
+        return s
+
 def derivative_interpolant(x, deriv_i, deriv_f, x_i, x_f):
     """Evaluates a quadratic function Q(x) determined by the value of its
     derivative at two locations. Note that this quadratic function is only
@@ -185,11 +228,6 @@ def ringdown_frequency(fd_waveform, total_mass):
          The ringdown frequency, in Hz.
     """
 
-    print(fd_waveform.sample_frequencies.data)
-    print("Min of frequencies = " + str(np.min(fd_waveform.sample_frequencies.data)))
-    print("Light ring frequency = " + str(light_ring_frequency_in_hz(total_mass)))
-    print(np.where(fd_waveform.sample_frequencies.data \
-      > light_ring_frequency_in_hz(total_mass)))
     light_ring_index = np.where(fd_waveform.sample_frequencies.data \
       > light_ring_frequency_in_hz(total_mass))[0][0]
     four_times_light_ring_index = np.where(fd_waveform.sample_frequencies.data \
@@ -296,42 +334,45 @@ def apply_ppe_correction(fd_waveform, total_mass, beta, b, f_lower, epsilon, del
     phase_change_5 = -delphi_5 + phase_change_4 + epsilon * pow(pi_M*f_5, 1/3.)
     phase_change_6 = delphi_6 + phase_change_5 
    
-    # Apply the ppE correction over the various ranges: 
+
+    #  Frequency indices
     freqs = new_fd_waveform.sample_frequencies.data
+    i_1 = np.searchsorted(freqs, f_1)
+    i_2 = np.searchsorted(freqs, f_2)
+    i_3 = np.searchsorted(freqs, f_3)
+    i_4 = np.searchsorted(freqs, f_4)
+    i_5 = np.searchsorted(freqs, f_5)
+    i_6 = np.searchsorted(freqs, f_6)
+
+    #  Apply the ppE correction over the various ranges: 
     vels = pow(pi_M * freqs, 1.0/3.0)
     phase_correction = np.ones_like(freqs, dtype = complex)
 
-    # Transition from No Correction to Beta Correction:
-    mask = (freqs >= f_1) & (freqs < f_2)
+    #  Transition from No Correction to Beta Correction:
     phase_change = \
-        derivative_interpolant(freqs[mask], ddelphidf_1, ddelphidf_2, f_1, f_2)
-    phase_correction[mask] = np.exp((phase_change + phase_change_1) * 1j)
+        derivative_interpolant(freqs[i_1:i_2], ddelphidf_1, ddelphidf_2, f_1, f_2)
+    phase_correction[i_1:i_2] = np.exp((phase_change + phase_change_1) * 1j)
 
     #  Apply Beta Correction:
-    mask = (freqs >= f_2) & (freqs < f_3)
-    phase_change = beta * pow(vels[mask], b)
-    phase_correction[mask] = np.exp((phase_change + phase_change_2) * 1j)
+    phase_change = beta * pow(vels[i_2:i_3], b)
+    phase_correction[i_2:i_3] = np.exp((phase_change + phase_change_2) * 1j)
 
     # Transition from Beta Correction to Epsilon Correction:
-    mask = (freqs >= f_3) & (freqs < f_4)
     phase_change = \
-        derivative_interpolant(freqs[mask], ddelphidf_3, ddelphidf_4, f_3, f_4)
-    phase_correction[mask] = np.exp((phase_change + phase_change_3) * 1j)
+        derivative_interpolant(freqs[i_3:i_4], ddelphidf_3, ddelphidf_4, f_3, f_4)
+    phase_correction[i_3:i_4] = np.exp((phase_change + phase_change_3) * 1j)
 
     #  Apply Epsilon Correction:
-    mask = (freqs >= f_4) & (freqs < f_5)
-    phase_change = epsilon * vels[mask]
-    phase_correction[mask] = np.exp((phase_change + phase_change_4) * 1j)
+    phase_change = epsilon * vels[i_4:i_5]
+    phase_correction[i_4:i_5] = np.exp((phase_change + phase_change_4) * 1j)
 
     # Transition from Epsilon Correction to Constant Correction:
-    mask = (freqs >= f_5) & ( freqs < f_6)
     phase_change = \
-        derivative_interpolant(freqs[mask], ddelphidf_5, ddelphidf_6, f_5, f_6)
-    phase_correction[mask] = np.exp((phase_change + phase_change_5) * 1j)
+        derivative_interpolant(freqs[i_5:i_6], ddelphidf_5, ddelphidf_6, f_5, f_6)
+    phase_correction[i_5:i_6] = np.exp((phase_change + phase_change_5) * 1j)
 
     # Apply Constant Correction:
-    mask = (freqs >= f_6)
-    phase_correction[mask] = np.exp(phase_change_6 * 1j)
+    phase_correction[i_6:] = np.exp(phase_change_6 * 1j)
 
     new_fd_waveform.data = new_fd_waveform.data * phase_correction
 

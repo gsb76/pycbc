@@ -26,6 +26,7 @@
 waveforms.
 """
 
+#import sys
 import os
 import lal, lalsimulation, numpy, copy
 from pycbc.types import TimeSeries, FrequencySeries, zeros, Array
@@ -137,6 +138,8 @@ def _check_lal_pars(p):
 def _lalsim_td_waveform(**p):
     fail_tolerant_waveform_generation
     lal_pars = _check_lal_pars(p)
+    #print("In _lalsim_td_waveform")
+    #sys.stdout.flush()
     #nonGRparams can be straightforwardly added if needed, however they have to
     # be invoked one by one
     try:
@@ -168,6 +171,25 @@ def _lalsim_td_waveform(**p):
             p['delta_t'] = p['delta_t_orig']
             hp = resample_to_delta_t(hp, hp.delta_t*2)
             hc = resample_to_delta_t(hc, hc.delta_t*2)
+
+            total_mass = float(p['mass1']) + float(p['mass2'])
+            ppe_beta = float(p['ppe_beta'])
+            b = float(p['ppe_b'])
+            f_lower = float(p['f_lower'])
+            epsilon = float(p['ppe_epsilon'])
+            delta_f = 4.0
+            if(ppe_beta != 0.0 or epsilon != 0.0):
+                #beta = ppe.beta_given_delta(ppe_delta, total_mass, f_lower*lal.MTSUN_SI, 0.018/total_mass, b)
+                hp_tapered = ppe.apply_tapering(hp, 0.08)
+                hc_tapered = ppe.apply_tapering(hc, 0.08)
+                hp_tapered_tilde = hp_tapered.to_frequencyseries()
+                hc_tapered_tilde = hc_tapered.to_frequencyseries()
+                new_hp_tilde = ppe.apply_ppe_correction(hp_tapered_tilde, total_mass, ppe_beta, b, f_lower,
+                            epsilon, delta_f)
+                new_hc_tilde = ppe.apply_ppe_correction(hc_tapered_tilde, total_mass, ppe_beta, b, f_lower,
+                            epsilon, delta_f)
+                return new_hp_tilde.to_timeseries(), new_hc_tilde.to_timeseries()
+
             return hp, hc
         raise
 
@@ -175,6 +197,24 @@ def _lalsim_td_waveform(**p):
 
     hp = TimeSeries(hp1.data.data[:], delta_t=hp1.deltaT, epoch=hp1.epoch)
     hc = TimeSeries(hc1.data.data[:], delta_t=hc1.deltaT, epoch=hc1.epoch)
+    total_mass = float(p['mass1']) + float(p['mass2'])
+    ppe_beta = float(p['ppe_beta'])
+    b = float(p['ppe_b'])
+    f_lower = float(p['f_lower'])
+    epsilon = float(p['ppe_epsilon'])
+    delta_f = 4.0
+    if(ppe_beta != 0.0 or epsilon != 0.0):
+        #beta = ppe.beta_given_delta(ppe_delta, total_mass, f_lower*lal.MTSUN_SI, 0.018/total_mass, b)
+        #print("using ppE for injection")
+        hp_tapered = ppe.apply_tapering(hp, 0.08)
+        hc_tapered = ppe.apply_tapering(hc, 0.08)
+        hp_tapered_tilde = hp_tapered.to_frequencyseries()
+        hc_tapered_tilde = hc_tapered.to_frequencyseries()
+        new_hp_tilde = ppe.apply_ppe_correction(hp_tapered_tilde, total_mass, ppe_beta, b, f_lower,
+                    epsilon, delta_f)
+        new_hc_tilde = ppe.apply_ppe_correction(hc_tapered_tilde, total_mass, ppe_beta, b, f_lower,
+                    epsilon, delta_f)
+        return new_hp_tilde.to_timeseries(), new_hc_tilde.to_timeseries()
 
     return hp, hc
 
@@ -187,6 +227,9 @@ def _spintaylor_aligned_prec_swapper(**p):
     the case of nonaligned doublespin systems the code will fail at the
     waveform generator level.
     """
+    #print("In _spintaylor_aligned_prec_swapper")
+    #sys.stdout.flush()
+
     orig_approximant = p['approximant']
     if p['spin2x'] == 0 and p['spin2y'] == 0 and p['spin1x'] == 0 and \
                                                               p['spin1y'] == 0:
@@ -198,6 +241,8 @@ def _spintaylor_aligned_prec_swapper(**p):
     return hp, hc
 
 def _lalsim_fd_waveform(**p):
+    #print("in _lalsim_fd_waveform function")
+    #sys.stdout.flush()
     lal_pars = _check_lal_pars(p)
     hp1, hc1 = lalsimulation.SimInspiralChooseFDWaveform(
                float(pnutils.solar_mass_to_kg(p['mass1'])),
@@ -209,15 +254,7 @@ def _lalsim_fd_waveform(**p):
                float(p['long_asc_nodes']), float(p['eccentricity']), float(p['mean_per_ano']),
                p['delta_f'], float(p['f_lower']), float(p['f_final']), float(p['f_ref']),
                lal_pars,
-               _lalsim_enum[p['approximant']])
-
-    # The parameters passed into this function are contained in `p`.
-    total_mass = float(p['mass1']) + float(p['mass2'])
-    beta = float(p['ppe_beta'])
-    b = float(p['ppe_b'])
-    f_lower = float(p['f_lower'])
-    epsilon = float(p['ppe_epsilon'])
-    delta_f = 4.0
+               _lalsim_enum[ppe.name_no_ppe(p['approximant'])])
 
     hp = FrequencySeries(hp1.data.data[:], delta_f=hp1.deltaF,
                             epoch=hp1.epoch)
@@ -225,13 +262,29 @@ def _lalsim_fd_waveform(**p):
     hc = FrequencySeries(hc1.data.data[:], delta_f=hc1.deltaF,
                             epoch=hc1.epoch)
 
-    hp = ppe.apply_ppe_correction(hp, total_mass, beta, b, f_lower,
+    total_mass = float(p['mass1']) + float(p['mass2'])
+    ppe_beta = float(p['ppe_beta'])
+    b = float(p['ppe_b'])
+    f_lower = float(p['f_lower'])
+    epsilon = float(p['ppe_epsilon'])
+    delta_f = 4.0
+    if(ppe_beta != 0.0 or epsilon != 0.0):
+        #print("ppe_beta is non zero")
+        #print(ppe_beta)
+        #print("ppe_b:")
+        #print(b)
+        #sys.stdout.flush()
+        #beta = ppe.beta_given_delta(ppe_delta, total_mass, f_lower*lal.MTSUN_SI, 0.018/total_mass, b)
+  
+        new_hp = ppe.apply_ppe_correction(hp, total_mass, ppe_beta, b, f_lower,
                             epsilon, delta_f)
-
-    hc = ppe.apply_ppe_correction(hc, total_mass, beta, b, f_lower,
+        new_hc = ppe.apply_ppe_correction(hc, total_mass, ppe_beta, b, f_lower,
                             epsilon, delta_f)
+        return new_hp, new_hc
 
     #lal.DestroyDict(lal_pars)
+    #print("ppe_beta is zero")
+    #sys.stdout.flush()
     return hp, hc
 
 def _lalsim_sgburst_waveform(**p):
@@ -244,7 +297,8 @@ def _lalsim_sgburst_waveform(**p):
 
     hp = TimeSeries(hp.data.data[:], delta_t=hp.deltaT, epoch=hp.epoch)
     hc = TimeSeries(hc.data.data[:], delta_t=hc.deltaT, epoch=hc.epoch)
-
+    #print("In _lalsim_sgburst_waveform")
+    #sys.stdout.flush()
     return hp, hc
 
 for approx_enum in xrange(0, lalsimulation.NumApproximants):
@@ -430,6 +484,9 @@ def get_fd_waveform_sequence(template=None, **kwds):
     p = props(template, required_args=fd_required_args, **kwds)
     lal_pars = _check_lal_pars(p)
 
+    #print("Unmodified code here, SHOULD NOT BE HERE!!")
+    #sys.stdout.flush()
+
     hp, hc = lalsimulation.SimInspiralChooseFDWaveformSequence(float(p['coa_phase']),
                float(pnutils.solar_mass_to_kg(p['mass1'])),
                float(pnutils.solar_mass_to_kg(p['mass2'])),
@@ -466,6 +523,13 @@ def get_td_waveform(template=None, **kwargs):
     """
     input_params = props(template, required_args=td_required_args, **kwargs)
     wav_gen = td_wav[type(_scheme.mgr.state)]
+    #print("In get_td_waveform")
+#    print("kwargs: ")
+#    print(kwargs)
+#    print("input params:")
+#    print(input_params)
+    #print(wav_gen[input_params['approximant']])
+    #sys.stdout.flush()
     if input_params['approximant'] not in wav_gen:
         raise ValueError("Approximant %s not available" %
                             (input_params['approximant']))
@@ -495,6 +559,9 @@ def get_fd_waveform(template=None, **kwargs):
 
     input_params = props(template, required_args=fd_required_args, **kwargs)
     wav_gen = fd_wav[type(_scheme.mgr.state)]
+    #print("In get_fd_waveform function")
+    #print(wav_gen[input_params['approximant']])
+    #sys.stdout.flush()
     if input_params['approximant'] not in wav_gen:
         raise ValueError("Approximant %s not available" %
                             (input_params['approximant']))
@@ -511,7 +578,6 @@ def get_fd_waveform(template=None, **kwargs):
                 raise NoWaveformError("cannot generate waveform: f_lower >= f_final")
     except KeyError:
         pass
-
     return wav_gen[input_params['approximant']](**input_params)
 
 get_fd_waveform.__doc__ = get_fd_waveform.__doc__.format(
@@ -537,6 +603,8 @@ def get_fd_waveform_from_td(**params):
     hc: pycbc.types.FrequencySeries
         Cross polarization time series
     """
+    #print("In get_fd_waveform_from_td")
+    #sys.stdout.flush()
 
     # determine the duration to use
     full_duration = duration = get_waveform_filter_length_in_time(**params)
@@ -585,6 +653,8 @@ def get_fd_waveform_from_td(**params):
     return hp, hc
 
 def get_td_waveform_from_fd(rwrap=0.2, **params):
+    #print("In get_td_waveform_from_fd function")
+    #sys.stdout.flush()
     """ Return time domain version of fourier domain approximant.
 
     This returns a time domain version of a fourier domain approximant, with
@@ -650,6 +720,8 @@ def get_interpolated_fd_waveform(dtype=numpy.complex64, return_hc=True,
                                  **params):
     """ Return a fourier domain waveform approximant, using interpolation
     """
+    #print("In get_interpolated_fd_waveform")
+    #sys.stdout.flush()
 
     def rulog2(val):
         return 2.0 ** numpy.ceil(numpy.log2(float(val)))
@@ -738,6 +810,8 @@ def get_sgburst_waveform(template=None, **kwargs):
     hcross: TimeSeries
         The cross polarization of the waveform.
     """
+    #print("In get_sgburst_waveform")
+    #sys.stdout.flush()
     input_params = props_sgburst(template,**kwargs)
 
     for arg in sgburst_required_args:

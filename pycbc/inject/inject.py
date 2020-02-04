@@ -25,6 +25,8 @@
 #
 """This module provides utilities for injecting signals into data"""
 
+#import pdb
+#import sys
 import os
 import numpy as np
 import lal
@@ -440,6 +442,9 @@ class CBCHDFInjectionSet(_HDFInjectionSet):
 
     def apply(self, strain, detector_name, f_lower=None, distance_scale=1,
               simulation_ids=None, inj_filter_rejector=None):
+	#print("In CBCHDFInjectionSet apply function")
+	#sys.stdout.flush()
+        #pdb.set_trace()
         """Add injections (as seen by a particular detector) to a time series.
 
         Parameters
@@ -513,10 +518,16 @@ class CBCHDFInjectionSet(_HDFInjectionSet):
         injected.table = injections
         if inj_filter_rejector is not None:
             inj_filter_rejector.injection_params = injected
+        #print("injected:")
+        #print(injected)
+        #sys.stdout.flush()
+        #print("Leaving apply function.")
         return injected
 
     def make_strain_from_inj_object(self, inj, delta_t, detector_name,
                                     f_lower=None, distance_scale=1):
+	#print("In CBCHDFInjectionSet make_strain_from_inj_object function")
+	#sys.stdout.flush()
         """Make a h(t) strain time-series from an injection object.
 
         Parameters
@@ -550,6 +561,8 @@ class CBCHDFInjectionSet(_HDFInjectionSet):
         # compute the waveform time series
         hp, hc = get_td_waveform(inj, delta_t=delta_t, f_lower=f_l,
                                  **self.extra_args)
+        #print(self.extra_args)
+        #sys.stdout.flush()
 
         hp /= distance_scale
         hc /= distance_scale
@@ -776,6 +789,8 @@ class InjectionSet(object):
     """
 
     def __init__(self, sim_file, **kwds):
+        #print("Initializing an InjectionSet object.")
+        #sys.stdout.flush()
         ext = os.path.basename(sim_file)
         if ext.endswith(('.xml', '.xml.gz', '.xmlgz')):
             self._injhandler = _XMLInjectionSet(sim_file, **kwds)
@@ -783,6 +798,10 @@ class InjectionSet(object):
         else:
             # assume hdf file
             self._injhandler = get_hdf_injtype(sim_file)(sim_file, **kwds)
+            #print("Using hdf file.")
+            #print("self._injhandler: ")
+            #print(self._injhandler)
+            #sys.stdout.flush()
         self.table = self._injhandler.table
         self.extra_args = self._injhandler.extra_args
         self.apply = self._injhandler.apply

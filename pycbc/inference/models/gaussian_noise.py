@@ -29,6 +29,7 @@ from pycbc.strain import gates_from_cli
 from pycbc.strain.calibration import Recalibrate
 from pycbc.inject import InjectionSet
 from pycbc.types.optparse import MultiDetOptionAction
+import pycbc.ppe.ppe_tools as ppe
 
 from .base import ModelStats
 from .base_data import BaseDataModel
@@ -1007,7 +1008,8 @@ def create_waveform_generator(variable_params, data, waveform_transforms=None,
         approximant = static_params['approximant']
     except KeyError:
         raise ValueError("no approximant provided in the static args")
-    generator_function = generator.select_waveform_generator(approximant)
+    generator_function = generator.select_waveform_generator(
+        ppe.name_no_ppe(approximant))
     # get data parameters; we'll just use one of the data to get the
     # values, then check that all the others are the same
     delta_f = None

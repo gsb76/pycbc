@@ -13,6 +13,12 @@ from utils import parse_args_all_schemes, simple_exit
 
 class TestPPE(unittest.TestCase):
 
+    def test_name_no_ppe(self):
+        s_ppe = "IMRPhenomPv2_ppE"
+        s = "IMRPhenomPv2"
+        self.assertEqual("IMRPhenomPv2", ppe.name_no_ppe(s_ppe))
+        self.assertEqual("IMRPhenomPv2", ppe.name_no_ppe(s))
+
     def test_derivative_interpolant(self):
         x = 0.51
         deriv_i = 0.2
@@ -155,7 +161,6 @@ class TestPPE(unittest.TestCase):
         self.assertAlmostEqual(1.2410412323990297e-21, new_hp_tap_tilde[300].real, delta = 1.0e-25)
 
     def test_apply_ppe_correction2(self):
-        print("Entering test of interest.")
         #  Tests that a dictionary can be created and passed to
         #  `_lalsim_fd_waveform` and that this function returns.
 
@@ -201,7 +206,7 @@ class TestPPE(unittest.TestCase):
           "ppe_beta": 0.0,
           "ppe_b" : 0.0,
           "ppe_epsilon" : 0.0,
-          "approximant": "TaylorF2"}
+          "approximant": "IMRPhenomPv2"}
 
         hp, hc = _lalsim_fd_waveform(**p)
 
