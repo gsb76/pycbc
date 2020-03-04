@@ -129,7 +129,7 @@ class TestPPE(unittest.TestCase):
         b = -1.0
         epsilon = 1.0
         delta_f = 8.0
-        new_hp_tap_tilde = ppe.apply_ppe_correction(hp_tap_tilde, \
+        new_hp_tap_tilde = ppe.apply_ppe_correction_dep(hp_tap_tilde, \
           mass1 + mass2, beta, b, f_lower, epsilon, delta_f)
         new_hp = new_hp_tap_tilde.to_timeseries()
 
