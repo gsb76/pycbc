@@ -26,7 +26,7 @@
 waveforms.
 """
 
-#import sys
+import sys
 import os
 import lal, lalsimulation, numpy, copy
 from pycbc.types import TimeSeries, FrequencySeries, zeros, Array
@@ -74,6 +74,9 @@ _lalsim_enum = {}
 _lalsim_sgburst_approximants = {}
 
 def _check_lal_pars(p):
+    #print("In _check_lal_pars")
+    #sys.stdout.flush()
+
     """ Create a laldict object from the dictionary of waveform parameters
 
     Parameters
@@ -184,10 +187,10 @@ def _lalsim_td_waveform(**p):
                 hc_tapered = ppe.apply_tapering(hc, 0.08)
                 hp_tapered_tilde = hp_tapered.to_frequencyseries()
                 hc_tapered_tilde = hc_tapered.to_frequencyseries()
-                new_hp_tilde = ppe.apply_ppe_correction(hp_tapered_tilde, total_mass, ppe_beta, b, f_lower,
-                            epsilon, delta_f)
-                new_hc_tilde = ppe.apply_ppe_correction(hc_tapered_tilde, total_mass, ppe_beta, b, f_lower,
-                            epsilon, delta_f)
+                new_hp_tilde = ppe.apply_ppe_correction_c0(hp_tapered_tilde, total_mass, ppe_beta, b, f_lower,
+                            delta_f)
+                new_hc_tilde = ppe.apply_ppe_correction_c0(hc_tapered_tilde, total_mass, ppe_beta, b, f_lower,
+                            delta_f)
                 return new_hp_tilde.to_timeseries(), new_hc_tilde.to_timeseries()
 
             return hp, hc
@@ -210,10 +213,10 @@ def _lalsim_td_waveform(**p):
         hc_tapered = ppe.apply_tapering(hc, 0.08)
         hp_tapered_tilde = hp_tapered.to_frequencyseries()
         hc_tapered_tilde = hc_tapered.to_frequencyseries()
-        new_hp_tilde = ppe.apply_ppe_correction(hp_tapered_tilde, total_mass, ppe_beta, b, f_lower,
-                    epsilon, delta_f)
-        new_hc_tilde = ppe.apply_ppe_correction(hc_tapered_tilde, total_mass, ppe_beta, b, f_lower,
-                    epsilon, delta_f)
+        new_hp_tilde = ppe.apply_ppe_correction_c0(hp_tapered_tilde, total_mass, ppe_beta, b, f_lower,
+                    delta_f)
+        new_hc_tilde = ppe.apply_ppe_correction_c0(hc_tapered_tilde, total_mass, ppe_beta, b, f_lower,
+                    delta_f)
         return new_hp_tilde.to_timeseries(), new_hc_tilde.to_timeseries()
 
     return hp, hc
@@ -268,6 +271,12 @@ def _lalsim_fd_waveform(**p):
     f_lower = float(p['f_lower'])
     epsilon = float(p['ppe_epsilon'])
     delta_f = 4.0
+    kind = p['ppe_kind']
+    #print(kind)
+    #print(ppe_beta)
+    #print(epsilon)
+    #print("entering if")
+    #sys.stdout.flush()
     if(ppe_beta != 0.0 or epsilon != 0.0):
         #print("ppe_beta is non zero")
         #print(ppe_beta)
@@ -276,10 +285,10 @@ def _lalsim_fd_waveform(**p):
         #sys.stdout.flush()
         #beta = ppe.beta_given_delta(ppe_delta, total_mass, f_lower*lal.MTSUN_SI, 0.018/total_mass, b)
   
-        new_hp = ppe.apply_ppe_correction(hp, total_mass, ppe_beta, b, f_lower,
-                            epsilon, delta_f)
-        new_hc = ppe.apply_ppe_correction(hc, total_mass, ppe_beta, b, f_lower,
-                            epsilon, delta_f)
+        new_hp = ppe.apply_ppe_correction(hp, total_mass, ppe_beta, b, epsilon,
+                            kind)
+        new_hc = ppe.apply_ppe_correction(hc, total_mass, ppe_beta, b, epsilon,
+                            kind)
         return new_hp, new_hc
 
     #lal.DestroyDict(lal_pars)
@@ -524,10 +533,10 @@ def get_td_waveform(template=None, **kwargs):
     input_params = props(template, required_args=td_required_args, **kwargs)
     wav_gen = td_wav[type(_scheme.mgr.state)]
     #print("In get_td_waveform")
-#    print("kwargs: ")
-#    print(kwargs)
-#    print("input params:")
-#    print(input_params)
+    #print("kwargs: ")
+    #print(kwargs)
+    #print("input params:")
+    #print(input_params)
     #print(wav_gen[input_params['approximant']])
     #sys.stdout.flush()
     if input_params['approximant'] not in wav_gen:

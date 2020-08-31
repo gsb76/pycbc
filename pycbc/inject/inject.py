@@ -491,6 +491,8 @@ class CBCHDFInjectionSet(_HDFInjectionSet):
         if simulation_ids:
             injections = injections[list(simulation_ids)]
         for ii, inj in enumerate(injections):
+            print("in inj loop:")
+            print(inj)
             f_l = inj.f_lower if f_lower is None else f_lower
             # roughly estimate if the injection may overlap with the segment
             # Add 2s to end_time to account for ringdown and light-travel delay
@@ -559,6 +561,8 @@ class CBCHDFInjectionSet(_HDFInjectionSet):
             f_l = f_lower
 
         # compute the waveform time series
+        print("inj:")
+        print(inj)
         hp, hc = get_td_waveform(inj, delta_t=delta_t, f_lower=f_l,
                                  **self.extra_args)
         #print(self.extra_args)

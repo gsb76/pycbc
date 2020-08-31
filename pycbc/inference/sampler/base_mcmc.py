@@ -25,6 +25,7 @@
 
 from __future__ import (absolute_import, division)
 
+import sys
 import os
 import signal
 import logging
@@ -490,6 +491,8 @@ class BaseMCMC(object):
         if iterinterval is None:
             iterinterval = self.target_niterations
         # run sampler until we have the desired number of samples
+        print("Starting to run sampler")
+       	sys.stdout.flush()
         while nsamples < target_nsamples:
             # adjust the interval if we would go past the number of iterations
             if self.target_niterations is not None and (

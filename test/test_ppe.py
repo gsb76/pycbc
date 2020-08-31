@@ -203,9 +203,10 @@ class TestPPE(unittest.TestCase):
           "f_lower": 20.0,
           "f_final": 0,
           "f_ref": 20.0,
-          "ppe_beta": 0.0,
-          "ppe_b" : 0.0,
-          "ppe_epsilon" : 0.0,
+          "ppe_beta": 1.0,
+          "ppe_b" : -1.0,
+          "ppe_epsilon" : 2.0,
+          "ppe_kind" : "C1_eps",
           "approximant": "IMRPhenomPv2"}
 
         hp, hc = _lalsim_fd_waveform(**p)

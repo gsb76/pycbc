@@ -210,6 +210,10 @@ ppe_beta = Parameter("ppe_beta",
                 dtype=float, default=0., label=r"$beta$",
                 description="The ppE parameter beta.")
 
+ppe_kind = Parameter("ppe_kind",
+                dtype=str, default=None, label=None,
+                description="A string that indicates the chosen ppE scheme.")
+
 # derived parameters (these are not used for waveform generation) for masses
 mchirp = Parameter("mchirp",
                 dtype=float, label=r"$\mathcal{M}~(\mathrm{M}_\odot)$",
@@ -508,7 +512,7 @@ calibration_params = ParameterList([
 # common generation parameters are parameters needed to generate either
 # a TD, FD, or frequency sequence waveform
 common_generation_params = ParameterList([
-    approximant, f_ref, phase_order, spin_order, tidal_order, amplitude_order, eccentricity_order])
+    approximant, f_ref, phase_order, spin_order, tidal_order, amplitude_order, eccentricity_order, ppe_kind])
 
 # Flags having discrete values, optional to generate either
 # a TD, FD, or frequency sequence waveform

@@ -696,6 +696,7 @@ def apply_ppe_correction_c1_eps(fd_waveform, total_mass, beta, b, delta_epsilon)
     return new_fd_waveform
 
 def apply_ppe_correction(fd_waveform, total_mass, beta, b, epsilon, kind):
+    new_fd_waveform = fd_waveform
     if(kind == "C0"):
         f_lower = 20.0
         delta_f = 5.0
